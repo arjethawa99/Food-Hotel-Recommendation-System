@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food & Hotel Suggestion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-step {
+            display: none;
+            width: 100%;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #555;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0 20px 0;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input:focus {
+            border-color: #009688;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 150, 136, 0.5);
+        }
+
+        button {
+            background-color: #009688;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00796b;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 5px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #777;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        /* Transition for form steps */
+        .form-step {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .form-step.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h1>Food & Hotel Suggestion</h1>
+    <form id="foodForm">
+
+        <!-- Step 1: Group of People -->
+        <div class="form-step active" id="step1">
+            <label for="groupSize">Group of People:</label>
+            <input type="number" id="groupSize" name="groupSize" min="1" required>
+        </div>
+
+        <!-- Step 2: State and City -->
+        <div class="form-step" id="step2">
+            <label for="state">Select State:</label>
+            <select id="state" name="state" required>
+                <option value="">Select a state</option>
+                <!-- State options will be populated dynamically -->
+            </select>
+
+            <label for="city">Select City:</label>
+            <select id="city" name="city" required>
+                <option value="">Select a city</option>
+                <!-- City options will be populated dynamically -->
+            </select>
+        </div>
+
+        <!-- Step 3: Hotel and Food Type -->
+        <div class="form-step" id="step3">
+            <label for="hotel">Select Hotel:</label>
+            <select id="hotel" name="hotel" required>
+                <option value="">Select a hotel</option>
+            </select>
+
+            <label for="foodType">Select Food Type:</label>
+            <select id="foodType" name="foodType" required>
+                <option value="veg">Veg</option>
+                <option value="non-veg">Non-Veg</option>
+            </select>
+        </div>
+
+        <!-- Step 4: Food Item and Price -->
+        <div class="form-step" id="step4">
+            <label for="foodItem">Select Food Item:</label>
+            <select id="foodItem" name="foodItem" required>
+                <option value="">Select a food item</option>
+            </select>
+
+            <div id="price">Price: </div>
+            <div id="speciality">Dish Speciality: </div>
+        </div>
+
+        <!-- Step 5: Diet and Recipe Suggestions -->
+        <div class="form-step" id="step5">
+            <label for="diet">Select Diet:</label>
+            <select id="diet" name="diet" required>
+                <option value="diet">Diet</option>
+                <option value="no-diet">Non-Diet</option>
+            </select>
+
+            <label for="recipeSuggestions">Recipe Suggestion:</label>
+            <select id="recipeSuggestions" name="recipeSuggestions" required>
+                <option value="">Select a recipe</option>
+            </select>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
+            <button type="button" id="prevBtn" onclick="navigate(-1)" style="display:none;">Previous</button>
+            <button type="button" id="nextBtn" onclick="navigate(1)">Next</button>
+            <button type="submit" id="submitBtn" style="display:none;">Submit</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    let currentStep = 0;
+    const steps = document.querySelectorAll('.form-step');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Show the current step and hide others
+    function navigate(direction) {
+        steps[currentStep].classList.remove('active');
+        currentStep += direction;
+
+        if (currentStep >= steps.length - 1) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'block';
+        } else {
+            nextBtn.style.display = 'block';
+            submitBtn.style.display = 'none';
+        }
+
+        if (currentStep <= 0) {
+            prevBtn.style.display = 'none';
+        } else {
+            prevBtn.style.display = 'block';
+        }
+
+        steps[currentStep].classList.add('active');
+    }
+
+    // Fetching and populating the form fields dynamically
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initial setup for form step navigation
+        navigate(0);
+
+        const stateSelect = document.getElementById("state");
+        const citySelect = document.getElementById("city");
+        const hotelSelect = document.getElementById("hotel");
+        const foodItemSelect = document.getElementById("foodItem");
+        const priceDiv = document.getElementById("price");
+        const specialityDiv = document.getElementById("speciality");
+        const recipeSelect = document.getElementById("recipeSuggestions");
+
+        // Fetch states and populate state dropdown
+        fetch('http://localhost:3000/api/states')
+            .then(response => response.json())
+            .then(states => {
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.id;
+                    option.text = state.name;
+                    stateSelect.appendChild(option);
+                });
+            });
+
+        // Handle state change and fetch cities for the selected state
+        stateSelect.addEventListener('change', () => {
+            const selectedState = stateSelect.value;
+            fetch(`http://localhost:3000/api/cities/${selectedState}`)
+                .then(response => response.json())
+                .then(cities => {
+                    citySelect.innerHTML = '<option value="">Select a city</option>';
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.id;
+                        option.text = city.name;
+                        citySelect.appendChild(option);
+                    });
+                });
+        });
+
+        // Handle city change and fetch hotels for the selected city
+        citySelect.addEventListener('change', () => {
+            const selectedCity = citySelect.value;
+            fetch(`http://localhost:3000/api/hotels/${selectedCity}`)
+                .then(response => response.json())
+                .then(hotels => {
+                    hotelSelect.innerHTML = '<option value="">Select a hotel</option>';
+                    hotels.forEach(hotel => {
+                        const option = document.createElement('option');
+                        option.value = hotel.id;
+                        option.text = hotel.name;
+                        hotelSelect.appendChild(option);
+                    });
+                });
+        });
+
+        // Handle hotel and food type change, fetch food items
+        hotelSelect.addEventListener('change', () => {
+            const selectedHotel = hotelSelect.value;
+            const foodType = document.getElementById("foodType").value;
+            fetch(`http://localhost:3000/api/food-items/${selectedHotel}/${foodType}`)
+                .then(response => response.json())
+                .then(foodItems => {
+                    foodItemSelect.innerHTML = '<option value="">Select a food item</option>';
+                    foodItems.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.text = item.name;
+                        foodItemSelect.appendChild(option);
+                    });
+                });
+        });
+
+        // Handle food item change and show price and speciality
+        foodItemSelect.addEventListener('change', () => {
+            const selectedFoodItem = foodItemSelect.value;
+            fetch(`http://localhost:3000/api/food-details/${selectedFoodItem}`)
+                .then(response => response.json())
+                .then(details => {
+                    priceDiv.innerText = `Price: ${details.price}`;
+                    specialityDiv.innerText = `Dish Speciality: ${details.speciality}`;
+                });
+        });
+
+        // Handle diet change and fetch recipe suggestions
+        document.getElementById("diet").addEventListener('change', () => {
+            const diet = document.getElementById("diet").value;
+            fetch(`http://localhost:3000/api/recipe-suggestions/${diet}`)
+                .then(response => response.json())
+                .then(recipes => {
+                    recipeSelect.innerHTML = '<option value="">Select a recipe</option>';
+                    recipes.forEach(recipe => {
+                        const option = document.createElement('option');
+                        option.value = recipe.id;
+                        option.text = recipe.name;
+                        recipeSelect.appendChild(option);
+                    });
+                });
+        });
+
+        // Handle form submission
+        document.getElementById('submitBtn').addEventListener('click', (event) => {
+            event.preventDefault();
+            const groupSize = document.getElementById("groupSize").value;
+            const foodItem = foodItemSelect.value;
+            const diet = document.getElementById("diet").value;
+
+            fetch('http://localhost:3000/api/recipe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ foodItem, diet })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.recipe) {
+                        // document.getElementById('recipe').innerText = data.recipe;
+                        alert(data.recipe)
+                    } else {
+                        // document.getElementById('recipe')
+                        document.getElementById('recipe').innerText = '';//'Recipe not found.';
+                        alert("Recipe not found")
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('recipe').innerText = 'Error fetching recipe';
+                });
+        });
+
+    });
+</script>
+
+</body>
+</html>
