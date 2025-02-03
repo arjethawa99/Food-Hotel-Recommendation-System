@@ -221,7 +221,7 @@
         const recipeSelect = document.getElementById("recipeSuggestions");
 
         // Fetch states and populate state dropdown
-        fetch('http://localhost:3000/api/states')
+        fetch('https://urlapipackages-1.onrender.com/api/states')
             .then(response => response.json())
             .then(states => {
                 states.forEach(state => {
@@ -235,7 +235,7 @@
         // Handle state change and fetch cities for the selected state
         stateSelect.addEventListener('change', () => {
             const selectedState = stateSelect.value;
-            fetch(`http://localhost:3000/api/cities/${selectedState}`)
+            fetch(`https://urlapipackages-1.onrender.com/api/cities/${selectedState}`)
                 .then(response => response.json())
                 .then(cities => {
                     citySelect.innerHTML = '<option value="">Select a city</option>';
@@ -251,7 +251,7 @@
         // Handle city change and fetch hotels for the selected city
         citySelect.addEventListener('change', () => {
             const selectedCity = citySelect.value;
-            fetch(`http://localhost:3000/api/hotels/${selectedCity}`)
+            fetch(`https://urlapipackages-1.onrender.com/api/hotels/${selectedCity}`)
                 .then(response => response.json())
                 .then(hotels => {
                     hotelSelect.innerHTML = '<option value="">Select a hotel</option>';
@@ -268,7 +268,7 @@
         hotelSelect.addEventListener('change', () => {
             const selectedHotel = hotelSelect.value;
             const foodType = document.getElementById("foodType").value;
-            fetch(`http://localhost:3000/api/food-items/${selectedHotel}/${foodType}`)
+            fetch(`https://urlapipackages-1.onrender.com/api/food-items/${selectedHotel}/${foodType}`)
                 .then(response => response.json())
                 .then(foodItems => {
                     foodItemSelect.innerHTML = '<option value="">Select a food item</option>';
@@ -284,7 +284,7 @@
         // Handle food item change and show price and speciality
         foodItemSelect.addEventListener('change', () => {
             const selectedFoodItem = foodItemSelect.value;
-            fetch(`http://localhost:3000/api/food-details/${selectedFoodItem}`)
+            fetch(`https://urlapipackages-1.onrender.com/api/food-details/${selectedFoodItem}`)
                 .then(response => response.json())
                 .then(details => {
                     priceDiv.innerText = `Price: ${details.price}`;
@@ -295,7 +295,7 @@
         // Handle diet change and fetch recipe suggestions
         document.getElementById("diet").addEventListener('change', () => {
             const diet = document.getElementById("diet").value;
-            fetch(`http://localhost:3000/api/recipe-suggestions/${diet}`)
+            fetch(`https://urlapipackages-1.onrender.com/api/recipe-suggestions/${diet}`)
                 .then(response => response.json())
                 .then(recipes => {
                     recipeSelect.innerHTML = '<option value="">Select a recipe</option>';
@@ -315,7 +315,7 @@
             const foodItem = foodItemSelect.value;
             const diet = document.getElementById("diet").value;
 
-            fetch('http://localhost:3000/api/recipe', {
+            fetch('https://urlapipackages-1.onrender.com/api/recipe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ foodItem, diet })
